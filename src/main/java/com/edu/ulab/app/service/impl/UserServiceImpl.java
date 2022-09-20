@@ -22,21 +22,38 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserDto createUser(UserDto userDto) {
-        return userMapper.userEntityToUserDto(userDao.createUser(userMapper.userDtoToUserEntity(userDto)));
+        log.info("Got create user by user DTO: {}", userDto);
+
+        UserDto createdUser = userMapper.userEntityToUserDto(userDao.createUser(userMapper.userDtoToUserEntity(userDto)));
+        log.info("Created user: {}", createdUser);
+
+        return createdUser;
     }
 
     @Override
     public UserDto updateUser(UserDto userDto) {
-        return userMapper.userEntityToUserDto(userDao.updateUser(userMapper.userDtoToUserEntity(userDto)));
+        log.info("Got update user by user DTO: {}", userDto);
+
+        UserDto updatedUser = userMapper.userEntityToUserDto(userDao.updateUser(userMapper.userDtoToUserEntity(userDto)));
+        log.info("Updated user: {}", updatedUser);
+
+        return updatedUser;
     }
 
     @Override
     public UserDto getUserById(Long id) {
-        return userMapper.userEntityToUserDto(userDao.getUserById(id));
+        log.info("Wants get user by user id: {}", id);
+
+        UserDto receivedUser = userMapper.userEntityToUserDto(userDao.getUserById(id));
+        log.info("Received user: {}", receivedUser);
+
+        return receivedUser;
     }
 
     @Override
     public void deleteUserById(Long id) {
+        log.info("Got delete user by user id: {}", id);
+
         userDao.deleteUserById(id);
     }
 }
