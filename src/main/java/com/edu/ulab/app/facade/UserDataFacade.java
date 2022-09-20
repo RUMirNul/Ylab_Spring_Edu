@@ -3,6 +3,8 @@ package com.edu.ulab.app.facade;
 import com.edu.ulab.app.constant.ErrorMessageTextConstants;
 import com.edu.ulab.app.dto.BookDto;
 import com.edu.ulab.app.dto.UserDto;
+import com.edu.ulab.app.exception.InvalidRequestDataException;
+import com.edu.ulab.app.exception.NotFoundException;
 import com.edu.ulab.app.mapper.BookMapper;
 import com.edu.ulab.app.mapper.UserMapper;
 import com.edu.ulab.app.service.BookService;
@@ -40,13 +42,13 @@ public class UserDataFacade {
         UserDto userDto = userMapper.userRequestToUserDto(userBookRequest.getUserRequest());
         log.info("Mapped user request: {}", userDto);
 
-        if (userDto == null) throw new NullPointerException(ErrorMessageTextConstants.USER_CAN_NOT_BE_NULL);
+        if (userDto == null) throw new InvalidRequestDataException(ErrorMessageTextConstants.USER_CAN_NOT_BE_NULL);
 
         UserDto createdUser = userService.createUser(userDto);
         log.info("Created user: {}", createdUser);
 
         List<BookRequest> bookRequest = userBookRequest.getBookRequests();
-        if (bookRequest == null) throw new NullPointerException(ErrorMessageTextConstants.BOOK_LIST_CAN_NOT_BE_NULL);
+        if (bookRequest == null) throw new InvalidRequestDataException(ErrorMessageTextConstants.BOOK_LIST_CAN_NOT_BE_NULL);
 
         List<Long> bookIdList = bookRequest
                 .stream()
@@ -69,12 +71,12 @@ public class UserDataFacade {
 
     public UserBookResponse updateUserWithBooks(UserBookRequest userBookRequest, Long userId) {
         log.info("Got user book update request: {}, userId = {}", userBookRequest, userId);
-        if (userId == null) throw new NullPointerException(ErrorMessageTextConstants.USER_CAN_NOT_BE_NULL);
+        if (userId == null) throw new InvalidRequestDataException(ErrorMessageTextConstants.USER_CAN_NOT_BE_NULL);
 
         UserDto userDto = userMapper.userRequestToUserDto(userBookRequest.getUserRequest());
         log.info("Mapped user request: {}", userDto);
 
-        if (userDto == null) throw new NullPointerException(ErrorMessageTextConstants.USER_CAN_NOT_BE_NULL);
+        if (userDto == null) throw new InvalidRequestDataException(ErrorMessageTextConstants.USER_CAN_NOT_BE_NULL);
 
         if (userService.getUserById(userId) != null) {
             userDto.setId(userId);
@@ -82,7 +84,7 @@ public class UserDataFacade {
             log.info("Updated user: {}", updatedUser);
 
             List<BookRequest> bookRequest = userBookRequest.getBookRequests();
-            if (bookRequest == null) throw new NullPointerException(ErrorMessageTextConstants.BOOK_LIST_CAN_NOT_BE_NULL);
+            if (bookRequest == null) throw new InvalidRequestDataException(ErrorMessageTextConstants.BOOK_LIST_CAN_NOT_BE_NULL);
 
             bookRequest.stream()
                     .filter(Objects::nonNull)
@@ -110,12 +112,12 @@ public class UserDataFacade {
 
     public UserBookResponse getUserWithBooks(Long userId) {
         log.info("Got user book get request with userId: {}", userId);
-        if (userId == null) throw new NullPointerException(ErrorMessageTextConstants.USER_ID_CAN_NOT_BE_NULL);
+        if (userId == null) throw new InvalidRequestDataException(ErrorMessageTextConstants.USER_ID_CAN_NOT_BE_NULL);
 
         UserDto userDto = userService.getUserById(userId);
         log.info("Got user: {}", userDto);
 
-        if (userDto == null) throw new NullPointerException("No have user with this id: " + userId);
+        if (userDto == null) throw new NotFoundException("No have user with this id: " + userId);
 
         return UserBookResponse.builder()
                 .userId(userDto.getId())

@@ -1,6 +1,5 @@
 package com.edu.ulab.app.storage.impl;
 
-import com.edu.ulab.app.constant.ErrorMessageTextConstants;
 import com.edu.ulab.app.entity.BookEntity;
 import com.edu.ulab.app.entity.UserEntity;
 import com.edu.ulab.app.storage.BookRepository;
@@ -34,7 +33,6 @@ public class Storage implements UserStorage<UserEntity, Long>, BookStorage<BookE
     @Override
     public UserEntity createUser(UserEntity entity) {
         log.info("Creating a User by Entity: {}", entity);
-        if (entity == null) throw new NullPointerException(ErrorMessageTextConstants.USER_CAN_NOT_BE_NULL);
 
         UserEntity returnedEntity = userRepository.createUser(entity);
         userIdAndBookIds.put(returnedEntity.getId(), new CopyOnWriteArrayList<>());
@@ -46,7 +44,6 @@ public class Storage implements UserStorage<UserEntity, Long>, BookStorage<BookE
     @Override
     public UserEntity updateUser(UserEntity entity) {
         log.info("Update User by Entity: {}", entity);
-        if (entity == null) throw new NullPointerException(ErrorMessageTextConstants.USER_CAN_NOT_BE_NULL);
 
         Long id = entity.getId();
         log.info("User id: {}", id);
@@ -66,7 +63,6 @@ public class Storage implements UserStorage<UserEntity, Long>, BookStorage<BookE
 
     @Override
     public UserEntity getUserById(Long id) {
-        if (id == null) throw new NullPointerException(ErrorMessageTextConstants.USER_ID_CAN_NOT_BE_NULL + ": " + id);
         log.info("Get user entity by id: {}", id);
 
         UserEntity userEntity = userRepository.getUserById(id);
@@ -98,15 +94,9 @@ public class Storage implements UserStorage<UserEntity, Long>, BookStorage<BookE
     @Override
     public BookEntity createBook(BookEntity entity) {
         log.info("Create book by Entity: {}", entity);
-        if (entity == null) throw new NullPointerException("Book entity can't be null");
 
         BookEntity tempEntity = bookRepository.createBook(entity);
         Long userId = tempEntity.getUserId();
-
-        if (userId == null) {
-            log.info(ErrorMessageTextConstants.USER_ID_CAN_NOT_BE_NULL);
-            throw new NullPointerException(ErrorMessageTextConstants.USER_ID_CAN_NOT_BE_NULL);
-        }
 
         log.info("Created book: {}", tempEntity);
         userIdAndBookIds.get(userId).add(tempEntity.getId());
@@ -117,7 +107,6 @@ public class Storage implements UserStorage<UserEntity, Long>, BookStorage<BookE
     @Override
     public BookEntity updateBook(BookEntity entity) {
         log.info("Got book update by Entity: {}", entity);
-        if (entity == null) throw new NullPointerException(ErrorMessageTextConstants.BOOK_CAN_NOT_BE_NULL);
 
         BookEntity updatedBook = bookRepository.updateBook(entity);
         log.info("Updated book: {}", updatedBook);
@@ -128,7 +117,6 @@ public class Storage implements UserStorage<UserEntity, Long>, BookStorage<BookE
     @Override
     public BookEntity getBookById(Long id) {
         log.info("Get book by id: {}", id);
-        if (id == null) throw new NullPointerException(ErrorMessageTextConstants.BOOK_CAN_NOT_BE_NULL);
 
         BookEntity gotBook = bookRepository.getBookById(id);
         log.info("Got book: {}", gotBook);
@@ -144,15 +132,16 @@ public class Storage implements UserStorage<UserEntity, Long>, BookStorage<BookE
             BookEntity tempBookEntity = bookRepository.getBookById(id);
             log.info("Book for delete: {}", tempBookEntity);
 
-            if (tempBookEntity == null) throw new NullPointerException(ErrorMessageTextConstants.BOOK_CAN_NOT_BE_NULL);
-            Long userId = tempBookEntity.getUserId();
+            if (tempBookEntity != null) {
+                Long userId = tempBookEntity.getUserId();
 
-            if (userId != null && userIdAndBookIds.containsKey(userId)) {
-                userIdAndBookIds.get(userId).remove(tempBookEntity.getId());
+                if (userId != null && userIdAndBookIds.containsKey(userId)) {
+                    userIdAndBookIds.get(userId).remove(tempBookEntity.getId());
+                }
+
+                bookRepository.deleteBookById(id);
+                log.info("Book was deleted with id: {}", id);
             }
-
-            bookRepository.deleteBookById(id);
-            log.info("Book was deleted with id: {}", id);
         }
     }
 

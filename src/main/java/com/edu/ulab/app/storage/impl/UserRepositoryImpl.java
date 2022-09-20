@@ -1,6 +1,5 @@
 package com.edu.ulab.app.storage.impl;
 
-import com.edu.ulab.app.constant.ErrorMessageTextConstants;
 import com.edu.ulab.app.entity.UserEntity;
 import com.edu.ulab.app.storage.UserRepository;
 import lombok.extern.slf4j.Slf4j;
@@ -25,7 +24,6 @@ public class UserRepositoryImpl implements UserRepository<UserEntity, Long> {
     @Override
     public UserEntity createUser(UserEntity entity) {
         log.info("Creating user by entity: {}", entity);
-        if (entity == null) throw new NullPointerException(ErrorMessageTextConstants.USER_CAN_NOT_BE_NULL);
 
         entity.setId(getNextId());
         userIdAndUserEntityMap.put(entity.getId(), entity);
@@ -39,7 +37,6 @@ public class UserRepositoryImpl implements UserRepository<UserEntity, Long> {
     @Override
     public UserEntity updateUser(UserEntity entity) {
         log.info("Update user: {}", entity);
-        if (entity == null) throw new NullPointerException(ErrorMessageTextConstants.USER_CAN_NOT_BE_NULL);
 
         Long id = entity.getId();
         log.info("User id for update: {}", id);
@@ -62,7 +59,6 @@ public class UserRepositoryImpl implements UserRepository<UserEntity, Long> {
     @Override
     public UserEntity getUserById(Long id) {
         log.info("Got user by id: {}", id);
-        if (id == null) throw new NullPointerException(ErrorMessageTextConstants.USER_CAN_NOT_BE_NULL);
 
         if (userIdAndUserEntityMap.get(id) != null) {
             UserEntity copyStorageIndependentUserEntity = createStorageIndependentUserEntity(userIdAndUserEntityMap.get(id));

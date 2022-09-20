@@ -1,6 +1,5 @@
 package com.edu.ulab.app.storage.impl;
 
-import com.edu.ulab.app.constant.ErrorMessageTextConstants;
 import com.edu.ulab.app.entity.BookEntity;
 import com.edu.ulab.app.storage.BookRepository;
 import lombok.extern.slf4j.Slf4j;
@@ -26,7 +25,6 @@ public class BookRepositoryImpl implements BookRepository<BookEntity, Long> {
     @Override
     public BookEntity createBook(BookEntity entity) {
         log.info("Create book by entity: {}", entity);
-        if (entity == null) throw new NullPointerException(ErrorMessageTextConstants.BOOK_CAN_NOT_BE_NULL);
 
         entity.setId(getNextId());
 
@@ -41,7 +39,6 @@ public class BookRepositoryImpl implements BookRepository<BookEntity, Long> {
     @Override
     public BookEntity updateBook(BookEntity entity) {
         log.info("Update book by entity: {}", entity);
-        if (entity == null) throw new NullPointerException(ErrorMessageTextConstants.BOOK_CAN_NOT_BE_NULL);
 
         Long id = entity.getId();
         log.info("Book id for update: {}", id);
@@ -64,7 +61,6 @@ public class BookRepositoryImpl implements BookRepository<BookEntity, Long> {
     @Override
     public BookEntity getBookById(Long id) {
         log.info("Got book by id: {}", id);
-        if (id == null) throw new NullPointerException(ErrorMessageTextConstants.BOOK_CAN_NOT_BE_NULL);
 
         if (bookIdAndBookEntityMap.get(id) != null) {
 
