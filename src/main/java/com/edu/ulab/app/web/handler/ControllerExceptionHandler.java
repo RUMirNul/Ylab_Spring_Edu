@@ -1,5 +1,6 @@
 package com.edu.ulab.app.web.handler;
 
+import com.edu.ulab.app.exception.InvalidRequestDataException;
 import com.edu.ulab.app.exception.NotFoundException;
 import com.edu.ulab.app.web.response.BaseWebResponse;
 import lombok.NonNull;
@@ -14,12 +15,20 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 @ControllerAdvice
 public class ControllerExceptionHandler {
 
-    @ExceptionHandler(NotFoundException.class)
+    @ExceptionHandler({NotFoundException.class})
     public ResponseEntity<BaseWebResponse> handleNotFoundExceptionException(@NonNull final NotFoundException exc) {
+        log.error(exc.getMessage());
+        return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .body(new BaseWebResponse(createErrorMessage(exc)));
+    }
+
+    @ExceptionHandler({InvalidRequestDataException.class})
+    public ResponseEntity<BaseWebResponse> handleInvalidRequestDataException(@NonNull final InvalidRequestDataException exc) {
         log.error(exc.getMessage());
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                 .body(new BaseWebResponse(createErrorMessage(exc)));
     }
+
 
     private String createErrorMessage(Exception exception) {
         final String message = exception.getMessage();
